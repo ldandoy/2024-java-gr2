@@ -1,20 +1,24 @@
+package exo1;
+
 // Voiture.java
 public class Voiture {
     // Attributs
-    String marque;
-    String modele;
-    String couleur;
+    public String marque;
+    public String modele;
+    public String couleur;
+
+    public Voiture() {}
 
     // Méthodes
-    void demarrer() {
+    public void demarrer() {
         System.out.println("La voiture démarre");
     }
 	
-	void accelerer() {
+	public void accelerer() {
         System.out.println("La voiture accelère");
     }
 
-    void freiner() {
+    public void freiner() {
         System.out.println("La voiture freine");
     }
 }
