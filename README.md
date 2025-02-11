@@ -968,3 +968,149 @@ public class Main {
 #### Exercice pratique
 Implémentez une méthode `calculerPrix` dans une classe parent `Produit` et redéfinissez là dans des classes enfants `Livre` et `DVD`.
 Un Livre est à 5% de TVA et un DVD à 20%.
+
+
+### Abstraction
+
+- L’abstraction consiste à cacher les détails d’implémentation et à exposer uniquement les fonctionnalités essentielles.
+- Implémentée avec :
+    - **Classes abstraites** : Utilisent le mot-clé `abstract`.
+    - **Interfaces** : Définissent un contrat sans fournir d'implémentation.
+
+#### Classe abstraite
+```java
+public abstract class Forme {
+    public abstract double calculerAire();
+}
+
+public class Cercle extends Forme {
+    private double rayon;
+
+    public Cercle(double rayon) {
+        this.rayon = rayon;
+    }
+
+    @Override
+    public double calculerAire() {
+        return Math.PI * rayon * rayon;
+    }
+}
+
+```
+
+#### Interface
+```java
+public interface Volant {
+    void voler();
+}
+
+public class Avion implements Volant {
+    @Override
+    public void voler() {
+        System.out.println("L'avion vole dans les airs.");
+    }
+}
+
+```
+
+#### Exercice pratique
+- Créez une interface `Transport` avec une méthode `deplacer()`.
+- Implémentez cette interface dans des classes `Voiture` et `Avion`.
+
+#### Correction
+
+*Transport.java*
+```java
+public interface Transport { void deplacer(); }
+```
+
+*Voiture.java*
+```java
+public class Voiture implements Transport {
+    @Override
+    public void deplacer() {
+        System.out.println("La voiture roule sur la route.");
+    }
+}
+```
+
+*Avion.java*
+```java
+public class Avion implements Transport {
+    @Override
+    public void deplacer() {
+        System.out.println("L'avion vole dans le ciel.");
+    }
+}
+```
+
+## Les collections, les exceptions et la gestion des fichiers
+
+Les collections sont des structures de données dynamiques qui permettent de stocker, gérer et manipuler des groupes d’objets.
+
+### Interfaces principales des collections
+- **Collection** : Interface de base.
+- **List** : Une liste ordonnée (par exemple, `ArrayList`, `LinkedList`).
+- **Set** : Une collection sans doublons (par exemple, `HashSet`, `TreeSet`).
+- **Map** : Une collection d'associations clé-valeur (par exemple, `HashMap`, `TreeMap`).
+
+*Exemple d'utilisation d’une List*
+```java
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        // Création d'une liste
+        ArrayList<String> fruits = new ArrayList<>();
+        
+        // Ajout d'éléments
+        fruits.add("Pomme");
+        fruits.add("Banane");
+        fruits.add("Orange");
+        
+        // Parcours de la liste
+        for (String fruit : fruits) {
+            System.out.println(fruit);
+        }
+
+        // Accès à un élément
+        System.out.println("Premier fruit : " + fruits.get(0));
+    }
+}
+```
+
+*Exemple d’utilisation d’une Map*
+```java
+import java.util.HashMap;
+
+public class Main {
+    public static void main(String[] args) {
+        // Création d'une map
+        HashMap<String, Integer> stock = new HashMap<>();
+        
+        // Ajout d'éléments
+        stock.put("Pommes", 50);
+        stock.put("Bananes", 20);
+
+        // Parcours de la map
+        for (String key : stock.keySet()) {
+            System.out.println(key + " : " + stock.get(key));
+        }
+    }
+}
+```
+
+#### Résumé des différences principales
+
+|Propriété|**List**|**Set**|**Map**|
+|---|---|---|---|
+|**Ordonnée**|Oui|Non (sauf `LinkedHashSet`)|Non (sauf `TreeMap`, `LinkedHashMap`)|
+|**Doublons**|Autorisés|Interdits|Clés interdites, valeurs autorisées|
+|**Accès par clé**|Non|Non|Oui (par la clé)|
+|**Structure**|Séquence d'éléments|Collection d'éléments uniques|Association clé-valeur|
+### Étude de cas complète
+
+Créez une application pour gérer une liste d'étudiants :
+- Ajouter un étudiant.
+- Afficher la liste des étudiants.
+- Supprimer un étudiant par son nom.
