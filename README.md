@@ -399,3 +399,572 @@ public class DataManipulation {
     }
 }
 ```
+
+##  2 - Introduction à la Programmation Orientée Objet (POO)
+
+### Définition de la Programmation Orientée Objet (POO)
+
+La **Programmation Orientée Objet (POO)** est un paradigme de programmation qui repose sur la création et la manipulation d’**objets** pour modéliser des éléments du monde réel ou conceptuel. Ces objets interagissent entre eux pour accomplir des tâches dans un programme.
+
+La POO organise le code autour de **classes** et **objets** plutôt que de simples instructions ou fonctions isolées, ce qui la rend particulièrement adaptée aux systèmes complexes et évolutifs.
+
+### Les concepts clés de la POO :
+
+- **Classe** :
+    
+    - Une classe est un plan ou un modèle à partir duquel des objets sont créés.
+    - Elle définit les **attributs** (données ou propriétés) et les **méthodes** (comportements ou actions) que possèdent ses objets.
+    - Exemple : Une classe `Voiture` peut contenir :
+        - Attributs : `marque`, `modèle`, `couleur`.
+        - Méthodes : `demarrer()`, `freiner()`.
+- **Objet** :
+    
+    - Un objet est une **instance** d’une classe, c’est-à-dire une version concrète et spécifique de cette classe.
+    - Chaque objet a ses propres valeurs pour les attributs définis dans la classe.
+    - Exemple : Une instance de la classe `Voiture` peut représenter une Toyota Corolla rouge.
+
+
+### Principes fondamentaux de la POO :
+
+La POO repose sur quatre piliers principaux qui permettent de structurer le code de manière efficace et réutilisable :
+
+1. **Encapsulation** :
+    - Limiter l'accès direct aux données (attributs) d’un objet.
+    - Protéger l’intégrité des données en fournissant des méthodes pour les consulter ou les modifier (**getters** et **setters**).
+    - Exemple : Une classe `CompteBancaire` peut cacher le solde pour éviter des modifications non contrôlées.
+    
+1. **Héritage** :
+    - Permet de créer une nouvelle classe (classe enfant) basée sur une classe existante (classe parent).
+    - La classe enfant hérite des attributs et méthodes de la classe parent, et peut ajouter ou redéfinir des fonctionnalités.
+    - Exemple : Une classe `Véhicule` peut être héritée par `Voiture` et `Moto`.
+    
+1. **Polymorphisme** :
+    - Permet à une même méthode ou interface d’être utilisée différemment selon le contexte.
+    - Exemple : Une méthode `dessiner()` peut être implémentée différemment pour des objets `Cercle` ou `Rectangle`.
+    
+1. **Abstraction** :
+    - Consiste à masquer les détails d’implémentation d’un objet pour se concentrer sur ses fonctionnalités principales.
+    - Exemple : Une classe abstraite `Animal` définit un comportement générique (`faireDuBruit()`), mais chaque sous-classe (`Chien`, `Chat`) implémente ce comportement différemment.
+
+### Avantages de la POO :
+
+- **Modularité** : Le code est organisé en classes et objets, ce qui facilite la gestion et la compréhension.
+- **Réutilisabilité** : Les classes peuvent être réutilisées ou étendues pour créer de nouvelles fonctionnalités.
+- **Extensibilité** : Il est facile d’ajouter de nouvelles fonctionnalités en étendant les classes existantes.
+- **Maintenance simplifiée** : Les bugs sont plus faciles à localiser, car le code est structuré en modules indépendants.
+
+### Exercice pour comprendre
+
+#### Prenons l’exemple de la modélisation d’une voiture :
+
+- **Classe** : Une classe `Voiture` définit le modèle général d’une voiture.
+- **Objet** : Une voiture spécifique comme une Toyota Corolla rouge.
+- **Attributs** : `marque`, `modèle`, `couleur`.
+- **Méthodes** : `démarrer`, `freiner`, `accélérer`.
+
+```
++--------------------+
+|      Voiture       |
++--------------------+
+| - marque  : String |
+| - modele  : String |
+| - couleur : String |
++--------------------+
+| + demarrer()       |
+| + accelerer()      |
+| + freiner()        |
++--------------------+
+
+```
+
+Créez la classe qui correspond à cette définition. En suite dans un fichier main.java vous crérez une voiture et la ferrez démarrer.
+
+### Correction de l'exercice
+
+*Voiture.java*
+```java
+// Voiture.java
+public class Voiture {
+    // Attributs
+    String marque;
+    String modele;
+    String couleur;
+
+    // Méthodes
+    void demarrer() {
+        System.out.println("La voiture démarre");
+    }
+	
+	void accelerer() {
+        System.out.println("La voiture accelère");
+    }
+
+    void freiner() {
+        System.out.println("La voiture freine");
+    }
+}
+```
+
+*main.java*
+```java
+public class Main {
+    public static void main(String[] args) {
+        Voiture voiture = new Voiture();
+        voiture.marque = "Toyota";
+        voiture.modele = "Corolla";
+        voiture.couleur = "Rouge";
+
+        voiture.demarrer();
+    }
+}
+```
+
+# 2 - Les bases de Java et de la POO
+
+### Définition 
+
+Une classe est un plan ou modèle pour créer des objets. Elle contient des **attributs** (propriétés) et des **méthodes** (comportements).
+
+```java
+public class NomDeLaClasse {
+    // Attributs
+    Type nomAttribut;
+
+    // Méthodes
+    Accessibilité TypeRetour nomMethode (Paramètres) {
+        // Corps de la méthode
+    }
+}
+```
+
+Instanciation d’un objet : action de créer un objet à partir d’une classe.
+
+```java
+Voiture voiture = new Voiture();
+```
+
+Un objet est une référence en mémoire.
+
+```java
+Voiture voiture1 = new Voiture();
+Voiture voiture2 = voiture1; // Les deux variables pointent vers le même objet
+```
+
+### Modificateurs d’accès et encapsulation
+
+**Public, Private, Protected** :
+- `public` : Accessible depuis n’importe où.
+- `private` : Accessible uniquement depuis la classe elle-même.
+- `protected` : Accessible depuis la classe, ses sous-classes et le même package.
+
+```java
+public class Voiture {
+    private String marque;
+
+    public String getMarque() {
+        return marque;
+    }
+
+    public void setMarque(String marque) {
+        this.marque = marque;
+    }
+}
+```
+
+### Constructeurs
+
+#### Définition
+- Un constructeur est une méthode spéciale utilisée pour initialiser un objet.
+- Il porte le même nom que la classe et n’a pas de type de retour.
+
+```java
+public class Voiture {
+    String marque;
+    String modele;
+    String couleur;
+
+    public Voiture(String marque, String modele, String couleur) {
+        this.marque = marque;
+        this.modele = modele;
+        this.couleur = couleur;
+    }
+	
+	void demarrer() {
+        System.out.println("La voiture démarre");
+    }
+
+    void accelerer() {
+        System.out.println("La voiture accelère");
+    }
+
+    void freiner() {
+        System.out.println("La voiture freine");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Voiture voiture = new Voiture("Toyota", "Corolla", "Rouge");
+        System.out.println(voiture.marque + " " + voiture.modele + " " + voiture.couleur);
+    }
+}
+```
+
+#### Exercice 
+
+En partant de l'exemple rendre les attributs marque et modèle privé.
+### Surcharge des constructeurs
+
+Possibilité de définir plusieurs constructeurs avec des signatures différentes.
+
+```java
+public class Voiture {
+    String marque;
+    String modele;
+
+    public Voiture() {
+        marque = "Inconnu";
+        modele = "Inconnu";
+    }
+
+    public Voiture(String marque) {
+        this.marque = marque;
+        this.modele = "Inconnu";
+    }
+
+    public Voiture(String marque, String modele) {
+        this.marque = marque;
+        this.modele = modele;
+    }
+}
+```
+
+### Méthodes
+
+##### Définition :
+- Les méthodes définissent les comportements d’une classe.
+- Une méthode peut prendre des paramètres et retourner une valeur
+
+```java
+public class Calculatrice {
+    public int additionner(int a, int b) {
+        return a + b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Calculatrice calc = new Calculatrice();
+        System.out.println(calc.additionner(5, 3));
+    }
+}
+
+```
+
+### Méthodes statiques et attributs statiques
+
+#### Définition
+Les membres `static` appartiennent à la classe et non à une instance.
+
+```java
+public class MathUtils {
+    public static double pi = 3.14;
+
+    public static double multiplier(double a, double b) {
+        return a * b;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println(MathUtils.pi);
+        System.out.println(MathUtils.multiplier(2, 3));
+    }
+}
+```
+
+### Exercice
+
+**1/ Créer une classe Person** :
+- Attributs : `nom`, `age`.
+- Constructeurs : un par défaut, un avec paramètres.
+- Méthodes : `sePresenter()` qui affiche le nom et l’âge.
+- Instanciez cette classe dans une méthode principale.
+
+**2/ Classe CompteBancaire** :
+- Attributs privés : `solde`, `titulaire`.
+- Méthodes : `deposer()`, `retirer()` (vérifier que le solde reste positif).
+- Créez une instance et effectuez plusieurs opérations dans une méthode principale.
+
+### Correction
+
+**Exo1**
+
+*Person.java*
+```java
+public class Person {
+    // Attributs
+    private String nom;
+    private int age;
+
+    // Constructeur par défaut
+    public Person() {
+        this.nom = "";
+        this.age = 0;
+    }
+
+    // Constructeur avec paramètres
+    public Person(String nom, int age) {
+        this.nom = nom;
+        this.age = age;
+    }
+
+    // Méthode pour se présenter
+    public void sePresenter() {
+        System.out.println("Je m'appelle " + this.nom + " et j'ai " + this.age + " ans.");
+    }
+}
+```
+
+*Main.java*
+```java
+class Main {
+// Méthode principale pour tester la classe
+    public static void main(String[] args) {
+        // Instanciation avec le constructeur par défaut
+        Person personne1 = new Person();
+        personne1.sePresenter(); // Affiche : Je m'appelle  et j'ai 0 ans.
+
+        // Instanciation avec le constructeur paramétré
+        Person personne2 = new Person("Alice", 25);
+        personne2.sePresenter(); // Affiche : Je m'appelle Alice et j'ai 25 ans.
+    }
+}
+```
+
+Exo2
+
+*CompteBancaire.java*
+```java
+public class CompteBancaire {
+    // Attributs privés
+    private double solde;
+    private String titulaire;
+
+    // Constructeur
+    public CompteBancaire(String titulaire, double soldeInitial) {
+        this.titulaire = titulaire;
+        this.solde = soldeInitial;
+    }
+
+    // Méthode pour déposer de l'argent
+    public void deposer(double montant) {
+        if (montant > 0) {
+            solde += montant;
+            System.out.println(montant + " € déposés. Nouveau solde : " + solde + " €");
+        } else {
+            System.out.println("Le montant à déposer doit être positif.");
+        }
+    }
+
+    // Méthode pour retirer de l'argent
+    public void retirer(double montant) {
+        if (montant > 0 && montant <= solde) {
+            solde -= montant;
+            System.out.println(montant + " € retirés. Nouveau solde : " + solde + " €");
+        } else if (montant > solde) {
+            System.out.println("Fonds insuffisants. Solde actuel : " + solde + " €");
+        } else {
+            System.out.println("Le montant à retirer doit être positif.");
+        }
+    }
+}
+```
+
+*Main.java*
+```java
+public class Main {
+    public static void main(String[] args) {
+        // Création d'une instance de CompteBancaire
+        CompteBancaire compte = new CompteBancaire("Alice", 1000.0);
+        
+        // Dépôt d'argent
+        compte.deposer(500.0); // 500.0 € déposés. Nouveau solde : 1500.0 €
+
+        // Retrait d'argent
+        compte.retirer(200.0); // 200.0 € retirés. Nouveau solde : 1300.0 €
+
+        // Tentative de retrait d'un montant supérieur au solde
+        compte.retirer(2000.0); // Fonds insuffisants. Solde actuel : 1300.0 €
+
+        // Tentative de retrait d'un montant négatif
+        compte.retirer(-100.0); // Le montant à retirer doit être positif.
+    }
+}
+```
+
+## Les principes fondamentaux de la POO
+
+### Encapsulation
+
+- L'encapsulation consiste à protéger les données d’une classe en les rendant inaccessibles directement depuis l'extérieur.
+- Cela se fait en déclarant les attributs comme **privés** (`private`) et en fournissant des **getters** et **setters** publics.
+
+```java
+public class CompteBancaire {
+    private double solde;
+
+    // Getter
+    public double getSolde() {
+        return solde;
+    }
+
+    // Setter
+    public void deposer(double montant) {
+        if (montant > 0) {
+            solde += montant;
+        }
+    }
+
+    public void retirer(double montant) {
+        if (montant > 0 && montant <= solde) {
+            solde -= montant;
+        } else {
+            System.out.println("Fonds insuffisants !");
+        }
+    }
+}
+```
+
+#### Exercice pratique
+
+- Implémentez une classe `Produit` avec des attributs `nom`, `prix` et `quantite`.
+- Créez des getters et setters pour gérer ces données.
+
+### Héritage
+
+- L’héritage permet à une classe (classe enfant) de **réutiliser** les attributs et méthodes d’une autre classe (classe parent).
+- On utilise le mot-clé `extends` pour établir une relation d’héritage.
+
+```java
+public class Vehicule {
+    protected String marque;
+
+    public void demarrer() {
+        System.out.println("Le véhicule démarre.");
+    }
+}
+
+public class Voiture extends Vehicule {
+    public void klaxonner() {
+        System.out.println("La voiture klaxonne !");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Voiture voiture = new Voiture();
+        voiture.marque = "Toyota";
+        voiture.demarrer();
+        voiture.klaxonner();
+    }
+}
+```
+
+#### Exercice pratique
+- Créez une classe parent `Animal` avec une méthode `faireDuBruit()`.
+- Créez des classes enfants `Chien` et `Chat` qui redéfinissent cette méthode.
+
+#### Correction
+
+*Animal.java*
+```java
+// Classe parent Animal
+public class Animal {
+    // Méthode faireDuBruit() dans la classe parent
+    public void faireDuBruit() {
+        System.out.println("L'animal fait un bruit.");
+    }
+}
+```
+
+*Chien.java*
+```java
+// Classe enfant Chien
+public class Chien extends Animal {
+    // Redéfinition de la méthode faireDuBruit()
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chien aboie : Woof Woof !");
+    }
+}
+```
+
+*Chat.java*
+```java
+// Classe enfant Chat
+public class Chat extends Animal {
+    // Redéfinition de la méthode faireDuBruit()
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chat miaule : Meow Meow !");
+    }
+}
+```
+
+### Polymorphisme
+
+- Le polymorphisme permet d’utiliser une méthode ou un objet de différentes manières, selon le contexte.
+- Deux formes principales :
+    - **Polymorphisme statique (surcharge)** : Plusieurs méthodes avec le même nom mais des signatures différentes.
+    - **Polymorphisme dynamique (redéfinition)** : Une méthode d'une classe parent est redéfinie dans une classe enfant.
+
+**Surcharge (statique)**
+```java
+public class Calculatrice {
+    public int additionner(int a, int b) {
+        return a + b;
+    }
+
+    public double additionner(double a, double b) {
+        return a + b;
+    }
+}
+```
+
+**Surcharge (dynamique)**
+```java
+public class Animal {
+    public void faireDuBruit() {
+        System.out.println("L'animal fait du bruit.");
+    }
+}
+
+public class Chien extends Animal {
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chien aboie.");
+    }
+}
+
+public class Chat extends Animal {
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chat miaule.");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Chien();
+        animal.faireDuBruit(); // Affiche : "Le chien aboie."
+        
+        Animal animal2 = new Chat();
+        animal2.faireDuBruit(); // Affiche : "Le chat miaule."
+    }
+}
+```
+
+#### Exercice pratique
+Implémentez une méthode `calculerPrix` dans une classe parent `Produit` et redéfinissez là dans des classes enfants `Livre` et `DVD`.
+Un Livre est à 5% de TVA et un DVD à 20%.
