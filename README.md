@@ -1114,3 +1114,179 @@ Créez une application pour gérer une liste d'étudiants :
 - Ajouter un étudiant.
 - Afficher la liste des étudiants.
 - Supprimer un étudiant par son nom.
+
+### Génériques
+
+Les génériques permettent de créer des classes, interfaces et méthodes qui fonctionnent avec n'importe quel type de données. Ils améliorent la sécurité et la réutilisabilité du code.
+
+*Exemple d'une classe*
+```java
+// Classe générique pour une boîte qui peut contenir n'importe quel type d'objet
+public class Boite<T> {
+    private T contenu;
+
+    public void setContenu(T contenu) {
+        this.contenu = contenu;
+    }
+
+    public T getContenu() {
+        return contenu;
+    }
+
+    public static void main(String[] args) {
+        // Boîte pour un entier
+        Boite<Integer> boiteEntier = new Boite<>();
+        boiteEntier.setContenu(123);
+        System.out.println("Contenu de la boîte : " + boiteEntier.getContenu());
+
+        // Boîte pour une chaîne de caractères
+        Boite<String> boiteString = new Boite<>();
+        boiteString.setContenu("Hello");
+        System.out.println("Contenu de la boîte : " + boiteString.getContenu());
+    }
+}
+```
+
+*Exemple d'une methode*
+```java
+public class Utils {
+    // Méthode générique pour afficher un tableau de n'importe quel type
+    public static <T> void afficherTableau(T[] tableau) {
+        for (T element : tableau) {
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Integer[] entiers = {1, 2, 3, 4, 5};
+        String[] chaines = {"Java", "Python", "C++"};
+
+        afficherTableau(entiers); // 1 2 3 4 5
+        afficherTableau(chaines); // Java Python C++
+    }
+}
+```
+
+### Gestion des exceptions
+
+La gestion des exceptions permet de gérer les erreurs qui peuvent survenir lors de l'exécution du programme.
+
+**Exceptions** : Les exceptions sont des événements anormaux qui interrompent le flux normal d’un programme.
+- **Mot-clé** :
+    - `try` : Bloque contenant le code à tester.
+    - `catch` : Bloque qui gère une exception.
+    - `finally` : Bloque qui s'exécute toujours.
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        try {
+            int resultat = 10 / 0; // Génère une exception
+        } catch (ArithmeticException e) {
+            System.out.println("Erreur : Division par zéro !");
+        } finally {
+            System.out.println("Bloc finally exécuté.");
+        }
+    }
+}
+```
+
+### Propagation des exceptions
+
+Une exception peut être propagée avec le mot-clé `throws`
+
+```java
+public class Main {
+    public static void division(int a, int b) throws ArithmeticException {
+        if (b == 0) {
+            throw new ArithmeticException("Division par zéro !");
+        }
+        System.out.println(a / b);
+    }
+    
+    public static void main(String[] args) {
+        try {
+            division(10, 0);
+        } catch (ArithmeticException e) {
+            System.out.println("Erreur capturée : " + e.getMessage());
+        }
+    }
+}
+```
+
+### Exercice pratique
+
+Implémentez un programme pour lire une valeur dans un tableau d'entiers :
+- Si l'index demandé dépasse la taille du tableau, une exception est levée.
+- Ajoutez une gestion des exceptions pour afficher un message clair.
+
+```java
+public class Main {
+    static String[] cours = {"Dev JAva", "Management", "Cyber"};
+
+    public static String getElement(int index) throws ArrayIndexOutOfBoundsException {
+        if (cours.length < index) {
+            throw new ArrayIndexOutOfBoundsException("Vous cherchez un element qui est hors du tableau !");
+        }
+
+        return cours[index];
+    }
+    
+    public static void main(String[] args) {
+        try {
+            System.out.println(getElement(6));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Erreur capturée : " + e.getMessage());
+        }
+    }
+}
+
+### Gestion des fichiers en Java
+
+La gestion des fichiers permet de lire et d'écrire des données dans des fichiers.
+
+#### Lire un fichier
+
+```java
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            File fichier = new File("data.txt");
+            Scanner lecteur = new Scanner(fichier);
+            
+            while (lecteur.hasNextLine()) {
+                String ligne = lecteur.nextLine();
+                System.out.println(ligne);
+            }
+            lecteur.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Fichier introuvable !");
+        }
+    }
+}
+```
+
+#### Écrire dans un fichier
+
+```java
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            FileWriter ecrivain = new FileWriter("data.txt");
+            ecrivain.write("Bonjour, monde !");
+            ecrivain.close();
+            System.out.println("Écriture terminée.");
+        } catch (IOException e) {
+            System.out.println("Erreur lors de l'écriture du fichier.");
+        }
+    }
+}
+```
