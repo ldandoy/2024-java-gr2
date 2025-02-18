@@ -1290,3 +1290,167 @@ public class Main {
     }
 }
 ```
+
+# Maven (dependency manager)
+## Installation et Utilisation de Maven en Java
+
+### Introduction à Maven
+
+**Apache Maven** est un outil de gestion de projet principalement utilisé pour les projets Java. Il permet :  
+- La gestion des dépendances (bibliothèques tierces) via un fichier `pom.xml`.  
+- L’automatisation du cycle de vie du projet (compilation, test, packaging, déploiement).  
+- Une structuration standardisée des projets Java.  
+- Une gestion centralisée des builds et configurations.
+
+## Installation de Maven
+
+### Prérequis
+
+Avant d’installer Maven, assurez-vous que :  
+🔹 **Java (JDK)** est installé sur votre machine.  
+🔹 **La variable d’environnement JAVA_HOME** est correctement configurée (doit pointer sur le dossier du jdk).
+
+Vérifiez votre version de Java en exécutant :
+
+```bash
+java --version
+```
+### Installation de Maven sur Windows
+
+Rendez-vous sur le site officiel : [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi)
+- Téléchargez la version **Binary zip** de Maven.
+- Décompressez le fichier ZIP (ex: `C:\apache-maven-3.x.x`).
+- Ajoutez le chemin `C:\apache-maven-3.x.x\bin` à la variable d’environnement `Path`.
+### Installation de Maven sur macOS
+
+Pour macOS (avec Homebrew) :
+
+```bash
+brew install maven
+```
+
+
+### Vérification de l'installation
+
+```bash
+mvn --version
+```
+
+## Création d’un Projet Maven
+
+### Générer un projet Maven
+
+Une fois Maven installé, vous pouvez créer un projet avec la commande :
+
+```bash
+mvn archetype:generate -DgroupId=com.monprojet -DartifactId=mon-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+```
+
+### Structure du projet Maven généré
+
+```plantext
+mon-app/
+│── src/
+│   ├── main/java/com/monprojet/App.java  # Code source principal
+│   ├── test/java/com/monprojet/AppTest.java  # Tests unitaires
+│── pom.xml  # Fichier de configuration du projet
+
+```
+## Comprendre le fichier `pom.xml`
+
+Le fichier **`pom.xml` (Project Object Model)** est le cœur du projet Maven.
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.monprojet</groupId>
+    <artifactId>mon-app</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>mon-app</name>
+    <url>http://maven.apache.org</url>
+	<build>
+		<plugins>
+			<plugin>
+			    <artifactId>maven-jar-plugin</artifactId>
+			    <version>3.2.2</version>
+			    <configuration>
+				    <archive>
+				        <manifest>
+					        <mainClass>com.monprojet.App</mainClass>
+				        </manifest>
+			        </archive>
+			    </configuration>
+		    </plugin>
+		</plugins>
+	</build>
+    <dependencies>
+        <!-- Dépendance pour JUnit (tests unitaires) -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
+
+```
+
+### Explication :
+
+- `<groupId>` : Identifiant unique du projet (ex: nom du package).
+- `<artifactId>` : Nom du projet (génère `mon-app-1.0-SNAPSHOT.jar`).
+- `<version>` : Version du projet.
+- `<dependencies>` : Liste des bibliothèques utilisées.
+## Utilisation de Maven : Commandes essentielles
+
+### Compiler le projet
+
+```bash
+mvn compile
+```
+
+### Générer un fichier JAR
+
+```bash
+mvn package
+```
+
+Le fichier `.jar` est généré dans `target/mon-app-1.0-SNAPSHOT.jar`.
+
+### Exécuter un programme Java compilé avec Maven 
+
+Si le projet contient une classe `main()`, vous pouvez l’exécuter avec :
+
+```bash
+java -jar target/mon-app-1.0-SNAPSHOT.jar
+```
+
+### Ajouter une dépendance Maven
+
+Vous pouvez ajouter une bibliothèque comme **MySQL Connector** en modifiant `pom.xml` :
+
+```xml
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
+```
+
+Puis téléchargez la dépendance avec :
+
+```bash
+mvn clean install
+```
+
+### Nettoyer le projet 
+Supprime les fichiers générés (`target/` etc.) :
+
+```bash
+mvn clean
+```
