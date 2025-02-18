@@ -1624,3 +1624,84 @@ public class App {
     }
 }
 ```
+
+## Les requêtes
+
+### Exécution d'une requête SELECT
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class SelectExample {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/maBase";
+        String username = "root";
+        String password = "password";
+
+        // Utilisation du try-with-resources pour gérer la fermeture automatique des ressources
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT id, nom, email FROM utilisateurs")) {
+
+            System.out.println("Liste des utilisateurs :");
+            // Parcours du ResultSet
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nom = rs.getString("nom");
+                String email = rs.getString("email");
+                System.out.println("ID : " + id + ", Nom : " + nom + ", Email : " + email);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de l'exécution de la requête SELECT : " + e.getMessage());
+        }
+    }
+}
+```
+
+### Exécution de requêtes de modification (INSERT, UPDATE, DELETE)
+
+#### Exemple de code : INSERT
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class InsertExample {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/maBase";
+        String username = "root";
+        String password = "password";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             Statement stmt = conn.createStatement()) {
+
+            String sqlInsert = "INSERT INTO Utilisateur (nom, email) VALUES ('Alice', 'alice@example.com')";
+            int rowsAffected = stmt.executeUpdate(sqlInsert);
+            System.out.println("Insertion réussie, nombre de lignes affectées : " + rowsAffected);
+
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de l'exécution de l'INSERT : " + e.getMessage());
+        }
+    }
+}
+```
+
+#### Exemple de code : UPDATE et DELETE
+
+```java
+// Exemple de UPDATE
+String sqlUpdate = "UPDATE Utilisateur SET email = 'nouvel.email@example.com' WHERE nom = 'Alice'";
+int updatedRows = stmt.executeUpdate(sqlUpdate);
+System.out.println("Nombre de lignes mises à jour : " + updatedRows);
+
+// Exemple de DELETE
+String sqlDelete = "DELETE FROM Utilisateur WHERE nom = 'Alice'";
+int deletedRows = stmt.executeUpdate(sqlDelete);
+System.out.println("Nombre de lignes supprimées : " + deletedRows);
+```
