@@ -1,37 +1,60 @@
 package com.monprojet;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.Scanner;
 
 public class App 
 {
     public static void main( String[] args )
     {
+        /* On clear la console */
+        System.out.print("\033[H\033[2J");   
+        System.out.flush();
+
         System.out.println( "Hello World!" );
+        Connexion link = new Connexion();
+        GestionUtilisateur gu = new GestionUtilisateur(link);
 
-        // Informations de connexion
-        String url = "jdbc:mysql://localhost:3306/mabasegr2"; // Remplacer "maBase" par le nom de votre base
-        String utilisateur = "root";
-        String motDePasse = "root";
-        Connection connexion = null;
+        /* On demande à l'utilisateur ce qu'il veut faire */
+        Scanner sc = new Scanner(System.in);
+        int choice = 0;
 
-        try {
-            // Établir la connexion
-            connexion = DriverManager.getConnection(url, utilisateur, motDePasse);
-            System.out.println("Connexion réussie !");
+        do { 
+            System.out.println("Que voulez vosu faire ?");
+            System.out.println("1 - Lister les utilisateurs");
+            System.out.println("2 - Ajouter un utilisateur");
+            System.out.println("0 - Quitter");
+            choice = sc.nextInt();
             
-        } catch (SQLException e) {
-            System.out.println("Erreur de connexion : " + e.getMessage());
-        } finally { // Toujours fermer la connexion pour éviter les fuites de ressources 
-            if (connexion != null) { 
-                try { 
-                    connexion.close(); 
-                    System.out.println("Connexion fermée avec succès."); 
-                } catch (SQLException e) { 
-                    System.err.println("Erreur lors de la fermeture de la connexion : " + e.getMessage()); 
-				} 
-			} 
-		}
+            System.out.print("\033[H\033[2J");   
+            System.out.flush(); 
+            
+            switch (choice) {
+                case 1:
+                    gu.listUtilisateurs();
+                    System.out.println("---------------------");
+                    break;
+
+                case 2:
+                    System.out.print("Nom de l'utilisateur: ");
+                    sc.nextLine();
+                    String nom = sc.nextLine();
+
+                    System.out.print("Email de l'utilisateur: ");
+                    String email = sc.nextLine();
+
+                    Utilisateur utilisateur = new Utilisateur(nom, email);
+
+                    gu.addUtilisateurs(utilisateur);
+                    System.out.println("---------------------");
+                    break;
+            
+                default:
+                    System.out.println("Pas d'action pour ce choix !");
+                    break;
+            }
+        } while(choice != 0);
+
+        link.close();
+        sc.close();
     }
 }
