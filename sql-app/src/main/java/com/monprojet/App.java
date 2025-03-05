@@ -42,9 +42,13 @@ public class App
                     System.out.print("Email de l'utilisateur: ");
                     String email = sc.nextLine();
 
-                    Utilisateur utilisateur = new Utilisateur(nom, email);
-
-                    gu.addUtilisateurs(utilisateur);
+                    try {
+                        Utilisateur utilisateur = new Utilisateur(0, nom, email);
+                        gu.addUtilisateurs(utilisateur);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    
                     System.out.println("---------------------");
                     break;
             

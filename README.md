@@ -1705,3 +1705,727 @@ String sqlDelete = "DELETE FROM Utilisateur WHERE nom = 'Alice'";
 int deletedRows = stmt.executeUpdate(sqlDelete);
 System.out.println("Nombre de lignes supprimées : " + deletedRows);
 ```
+### Utilisation des PreparedStatement
+
+#### Pourquoi ?
+
+#### Sécurité et prévention des injections SQL
+
+- **Problème avec Statement** :  
+    L’utilisation d’un `Statement` avec des chaînes de caractères concaténées peut rendre votre application vulnérable aux attaques par injection SQL, où un utilisateur malveillant peut injecter du code SQL dans les paramètres.
+    
+- **Solution avec PreparedStatement** :  
+    Un `PreparedStatement` permet de définir des requêtes SQL avec des paramètres (`?`) qui seront remplacés de manière sécurisée par des valeurs fournies par l’utilisateur. Cela évite la concaténation directe de chaînes et limite les risques d'injections SQL.
+    
+
+#### Optimisation des performances
+
+- **Requêtes précompilées** :  
+    Les requêtes préparées sont précompilées par le serveur de base de données. Si la même requête est exécutée plusieurs fois avec des paramètres différents, le serveur peut réutiliser le plan d'exécution, améliorant ainsi les performances.
+
+Maintenant, comment mettons çà en œuvre ?
+
+```java
+String sqlSelect = "SELECT id, nom, email FROM utilisateurs WHERE nom = ?";
+PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect);
+pstmtSelect.setString(1, "Alice");
+ResultSet rs = pstmtSelect.executeQuery();
+
+while (rs.next()) {
+    int id = rs.getInt("id");
+    String nom = rs.getString("nom");
+    String email = rs.getString("email");
+    System.out.println("ID : " + id + ", Nom : " + nom + ", Email : " + email);
+}
+```
+
+Dans un cas un peu plus complexe:
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class PreparedStatementExample {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/maBase";
+        String username = "root";
+        String password = "password";
+
+        String sqlInsert = "INSERT INTO utilisateurs (nom, email) VALUES (?, ?)";
+        String sqlSelect = "SELECT id, nom, email FROM utilisateurs WHERE nom = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            // Insertion d'un nouvel utilisateur
+            try (PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsert)) {
+                pstmtInsert.setString(1, "Alice");
+                pstmtInsert.setString(2, "alice@example.com");
+                int rowsAffected = pstmtInsert.executeUpdate();
+                System.out.println("Insertion réussie, lignes affectées : " + rowsAffected);
+            }
+
+            // Sélection des utilisateurs portant le nom "Alice"
+            try (PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect)) {
+                pstmtSelect.setString(1, "Alice");
+                try (ResultSet rs = pstmtSelect.executeQuery()) {
+                    System.out.println("Résultats de la requête : ");
+                    while (rs.next()) {
+                        int id = rs.getInt("id");
+                        String nom = rs.getString("nom");
+                        String email = rs.getString("email");
+                        System.out.println("ID : " + id + ", Nom : " + nom + ", Email : " + email);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL : " + e.getMessage());
+        }
+    }
+}
+```
+
+### Exercice
+
+Modifiez votre programme pour qu'il utilise les `PreparedStatement`.
+
+
+### Mapper les résultats JDBC vers des objets Java
+
+### Introduction
+
+En JDBC, après avoir exécuté une requête SQL, les données sont renvoyées sous forme d'un objet `ResultSet`. Pour faciliter l'utilisation de ces données, il est courant de les mapper en objets Java. Ce mapping permet de :
+
+- Rendre le code plus orienté objet.
+- Faciliter la manipulation et la transmission des données dans l'application.
+- Centraliser la logique de transformation des données.
+
+Création d'une classe POJO.
+
+```java
+public class Utilisateur {
+    private int id;
+    private String nom;
+    private String email;
+
+    // Constructeur par défaut
+    public Utilisateur() {}
+
+    // Constructeur avec paramètres
+    public Utilisateur(int id, String nom, String email) {
+        this.id = id;
+        this.nom = nom;
+        this.email = email;
+    }
+
+    // Getters et setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Utilisateur{" +
+               "id=" + id +
+               ", nom='" + nom + '\'' +
+               ", email='" + email + '\'' +
+               '}';
+    }
+}
+```
+
+### Extraction et mapping des données avec ResultSet
+
+Après avoir exécuté une requête SQL, nous devons extraire les données du `ResultSet` et créer des instances de `Utilisateur`.
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MapperExample {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/maBase";
+        String username = "root";
+        String password = "password";
+
+        List<Utilisateur> utilisateurs = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT id, nom, email FROM utilisateurs")) {
+
+            // Itération sur le ResultSet
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nom = rs.getString("nom");
+                String email = rs.getString("email");
+
+                // Création d'un objet Utilisateur pour chaque enregistrement
+                Utilisateur utilisateur = new Utilisateur(id, nom, email);
+                utilisateurs.add(utilisateur);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération des données : " + e.getMessage());
+        }
+
+        // Affichage des utilisateurs mappés
+        for (Utilisateur utilisateur : utilisateurs) {
+            System.out.println(utilisateur);
+        }
+    }
+}
+```
+
+Exercice pratique
+
+- **Création de la classe POJO :**
+    - Créez une classe `Produit` représentant une table `Produit` avec les colonnes `id`, `nom` et `prix`.
+- **Mapping des données :**
+    - Écrivez une méthode `List<Produit> getAllProduits()` qui se connecte à la base de données, exécute une requête SELECT sur la table `Produit` et retourne une liste d'objets `Produit`.
+- **Affichage des résultats :**
+    - Dans la méthode `main()`, appelez `getAllProduits()` et affichez les produits obtenus.
+- **Bonus :**
+    - Ajoutez des logs ou des messages pour indiquer le début et la fin du processus de mapping.
+
+### Exercice final
+
+Ajouter la gestion complète des produits, comme vous l'avez fait pour les utilisateurs.
+
+# JavaFX
+
+## Présentation
+
+JavaFX est un framework moderne pour créer des interfaces graphiques en Java. Il a remplacé **Swing** et **AWT** et propose des fonctionnalités avancées telles que :  
+✅ Interface graphique dynamique et moderne  
+✅ Prise en charge du CSS et de FXML pour séparer la logique et la présentation  
+✅ Compatible avec **JDK 11+**, mais nécessite un module externe  
+✅ Permet la création d'animations et d'interfaces interactives
+
+### Comparaison avec Swing et AWT
+
+|Caractéristique|JavaFX|Swing|AWT|
+|---|---|---|---|
+|Modernité|✅ Oui|🔶 Moyen|❌ Non|
+|CSS pour le style|✅ Oui|❌ Non|❌ Non|
+|Prise en charge de FXML|✅ Oui|❌ Non|❌ Non|
+|Interface plus fluide|✅ Oui|🔶 Correcte|❌ Très limitée|
+
+**Conclusion :** JavaFX est plus moderne et plus flexible que Swing et AWT.
+
+## Installation
+
+**Télécharger JavaFX**
+
+- Récupérer la dernière version depuis https://gluonhq.com/products/javafx/
+- Décompresser l’archive et noter le chemin d’installation
+
+
+## Création du projet avec Maven
+
+```bash
+mvn archetype:generate -DgroupId=com.example -DartifactId=javafx-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+```
+
+Cette commande va vous créer un dossier javafx-app dans lequel vous trouverez toutes les dépendances installé d'un projet de base java.
+
+```css
+javafx-app/
+├── pom.xml
+└── src/
+    ├── main/
+    │   ├── java/
+    │   │   └── com/
+    │   │       └── example/
+    │   │           └── App.java
+    │   └── resources/
+    └── test/
+        └── java/
+            └── com/
+                └── example/
+                    └── AppTest.java
+```
+
+A présent configurons le projet pour qu'il puisse utiliser javafx. Pour cela modifiez le fichier `pom.xml`
+
+*pom.xml*
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>javafx-app</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>javafx-app</name>
+  <url>http://maven.apache.org</url>
+  <build>
+    <plugins>
+        <!-- Maven Shade Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.5.1</version> <!-- Vérifiez la dernière version sur Maven Central -->
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <!-- Optionnel : spécifier la classe principale -->
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>com.example.App</mainClass> <!-- Remplacez par votre classe principale -->
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>0.0.8</version>
+            <configuration>
+                <mainClass>com.example.App</mainClass>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Dépendance JavaFX -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>20</version>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-fxml</artifactId>
+        <version>20</version>
+    </dependency>
+  </dependencies>
+</project>
+```
+## Première fenêtre
+
+Dans le dossier  `src/main/java/com/example`, modifier le fichier `App.java`
+
+*App.java*
+```java
+package com.example;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+public class App extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Créer un label
+        Label label = new Label("Bonjour, JavaFX !");
+
+        // Créer une scène avec le label
+        Scene scene = new Scene(label, 300, 200);
+
+        // Configurer la fenêtre principale
+        primaryStage.setTitle("Ma Première Application JavaFX");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+Maintenant compilons et exécutons le programme
+
+```bash
+$ mvn clean javafx:run
+```
+
+Normalement une belle fenêtre avec `Bonjour, JavaFX !` s'affiche
+
+
+## Ajouter du style
+
+*FormulaireApp.java*
+```java
+package com.example;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class FormulaireApp extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Créer les composants
+        Label label = new Label("Entrez votre nom :");
+        TextField textField = new TextField();
+        Button button = new Button("Valider");
+        Label resultLabel = new Label();
+
+        // Gérer l'événement du bouton
+        button.setOnAction(event -> {
+            String nom = textField.getText();
+            resultLabel.setText("Bonjour, " + nom + " !");
+        });
+
+        // Organiser les composants dans un VBox
+        VBox vbox = new VBox(10); // 10 est l'espacement entre les composants
+        vbox.getChildren().addAll(label, textField, button, resultLabel);
+
+        // Créer la scène et appliquer le fichier CSS
+        Scene scene = new Scene(vbox, 300, 200);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        // Afficher la fenêtre
+        primaryStage.setTitle("Formulaire Stylisé");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+Et le fichier de style
+
+*resources/styles.css*
+```css
+.root {
+    -fx-background-color: #f4f4f4; /* Couleur de fond */
+    -fx-font-family: 'Arial';
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333; /* Couleur du texte */
+}
+
+.text-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.button {
+    -fx-background-color: #4CAF50; /* Couleur de fond */
+    -fx-text-fill: white; /* Couleur du texte */
+    -fx-font-size: 14px;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px 20px;
+}
+
+.button:hover {
+    -fx-background-color: #45a049; /* Couleur au survol */
+}
+
+.button:pressed {
+    -fx-background-color: #3d8b40; /* Couleur au clic */
+}
+```
+
+## Les images
+
+Créer un le répertoire `src/main/resources/images` pour stocker vos images, comme ceci
+
+```bash
+mkdir -p src/main/resources/images
+```
+
+Ensuite ajouter une image de votre choix dans le dossier.
+
+### Affichage de l'image en code directement: 
+```java
+// Charger l'image depuis les ressources
+Image image = new Image(getClass().getResourceAsStream("/images/votre_image.jpg"));
+
+// Créer un BackgroundImage
+BackgroundImage backgroundImage = new BackgroundImage(
+		image,
+		BackgroundRepeat.NO_REPEAT,  // Répétition horizontale
+		BackgroundRepeat.NO_REPEAT,  // Répétition verticale
+		BackgroundPosition.CENTER,  // Position de l'image
+		new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true) // Taille de l'image
+);
+
+// Créer un Background avec l'image
+Background background = new Background(backgroundImage);
+
+// Appliquer le fond au Pane
+root.setBackground(background);
+```
+
+### Affichage de l'image via le fichier de styles.css
+
+```css
+.root {
+    -fx-background-image: url('/images/votre_image.jpg'); /* Chemin de l'image */
+    -fx-background-size: cover; /* Ajuste l'image pour couvrir tout l'espace */
+    -fx-background-position: center; /* Centre l'image */
+    -fx-background-repeat: no-repeat; /* Empêche la répétition de l'image */
+}
+```
+
+## Exemple complet
+
+### Structure:
+
+```css
+mon-app/
+│── src/
+│   ├── main/java/com/monprojet/App.java  # Code source principal
+|   ├── main/resources/styles.css # Ici le fichier de style
+|   ├── main/resources/images/votre_image.jpg # Ici on place touts les images
+│   ├── test/java/com/monprojet/AppTest.java  # Tests unitaires
+│── pom.xml  # Fichier de configuration du projet
+```
+
+*App.java*
+```java
+package com.example;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class App extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Créer les composants
+        Label label = new Label("Entrez votre nom :");
+        TextField textField = new TextField();
+        Button button = new Button("Valider");
+        Label resultLabel = new Label();
+
+        // Gérer l'événement du bouton
+        button.setOnAction(event -> {
+            String nom = textField.getText();
+            resultLabel.setText("Bonjour, " + nom + " !");
+        });
+
+        // Organiser les composants dans un VBox
+        VBox vbox = new VBox(10); // 10 est l'espacement entre les composants
+        // Ajouter une classe CSS (si vous utilisez l'option 1)
+        vbox.getStyleClass().add("vbox-root");
+        vbox.getChildren().addAll(label, textField, button, resultLabel);
+
+        // Créer la scène et appliquer le fichier CSS
+        Scene scene = new Scene(vbox, 300, 200);
+        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        // Afficher la fenêtre
+        primaryStage.setTitle("Formulaire Stylisé");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+*styles.css*
+```css
+/* styles.css */
+.root {
+	-fx-background-color: #f4f4f4; /* Couleur de fond */
+    -fx-font-family: 'Arial';
+}
+
+.vbox-root {
+    -fx-background-image: url('/images/nelaka.png'); /* Chemin de l'image */
+    -fx-background-size: cover; /* Ajuste l'image pour couvrir tout l'espace */
+    -fx-background-position: center; /* Centre l'image */
+    -fx-background-repeat: no-repeat; /* Empêche la répétition de l'image */
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333; /* Couleur du texte */
+}
+
+.text-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.button {
+    -fx-background-color: #4CAF50; /* Couleur de fond */
+    -fx-text-fill: white; /* Couleur du texte */
+    -fx-font-size: 14px;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px 20px;
+}
+
+.button:hover {
+    -fx-background-color: #45a049; /* Couleur au survol */
+}
+
+.button:pressed {
+    -fx-background-color: #3d8b40; /* Couleur au clic */
+}
+```
+
+## Propriétés et Liaisons
+
+*PropertiesApp.java*
+```java
+package com.example;
+
+import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class PropertiesApp extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Créer un champ de texte et un label
+        TextField textField = new TextField();
+        Label label = new Label();
+
+        // Lier le texte du label au texte du champ de texte
+        label.textProperty().bind(textField.textProperty());
+
+        // Ajouter un message si le champ est vide
+        label.textProperty().bind(Bindings
+                .when(textField.textProperty().isEmpty())
+                .then("Veuillez entrer du texte")
+                .otherwise(textField.textProperty()));
+
+        // Organiser les composants dans un VBox
+        VBox vbox = new VBox(10, textField, label);
+
+        // Créer la scène et afficher la fenêtre
+        Scene scene = new Scene(vbox, 300, 200);
+        primaryStage.setTitle("Propriétés et Liaisons");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+### Exercice : Créer un Convertisseur de Température
+- Créez une application qui convertit les degrés Celsius en Fahrenheit en temps réel.
+- Utilisez deux champs de texte et des liaisons pour synchroniser les valeurs.
+
+## FXML et Scene Builder
+
+FXML est un langage de balisage pour définir des interfaces utilisateur JavaFX. Il permet de séparer la logique de l'interface.
+Scene Builder est un outil visuel pour créer des interfaces FXML sans écrire de code manuellement.
+
+Pour créer vous même vos interfaces graphiques: https://gluonhq.com/products/scene-builder/
+
+*interface.fxml*
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" spacing="10" alignment="CENTER">
+    <Label fx:id="messageLabel" text="Bonjour, JavaFX !"/>
+    <Button fx:id="clickButton" text="Cliquez-moi !"/>
+</VBox>
+```
+
+*FXMLApp.java*
+
+```java
+package com.example;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class FXMLApp extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // Charger l'interface FXML
+        VBox root = FXMLLoader.load(getClass().getResource("/interface.fxml"));
+
+        // Créer la scène et afficher la fenêtre
+        Scene scene = new Scene(root, 300, 200);
+        primaryStage.setTitle("Interface FXML");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+```
+
+Pour exécuter le programme
+
+```bash
+mvn clean javafx:run -Djavafx.mainClass=com.example.FXMLApp
+```

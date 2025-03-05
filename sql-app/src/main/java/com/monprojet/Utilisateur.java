@@ -5,13 +5,22 @@ public class Utilisateur {
     private String nom;
     private String email;
 
-    public Utilisateur(String nom, String email) {
-        this.nom = nom;
-        this.email = email;
+    public Utilisateur(int id, String nom, String email) {
+        if (nom == null || nom.trim().isEmpty() || nom.trim().length() < 3) {
+            throw new IllegalArgumentException("Le nom doit contenir au moins 3 caractères et ne peut pas être vide.");
+        }
+
+        this.id = id;
+        this.nom = nom.trim();
+        this.email = email.trim();
     }
 
     public void setNom(String nom) {
-        this.nom = nom;
+        if (nom == null || nom.trim().isEmpty() || nom.trim().length() < 3) {
+            throw new IllegalArgumentException("Le nom doit contenir au moins 3 caractères et ne peut pas être vide.");
+        }
+
+        this.nom = nom.trim();
     }
 
     public String getNom() {
@@ -34,15 +43,18 @@ public class Utilisateur {
         return this.id;
     }
 
-    public boolean isValidNom() {
-        if (!this.nom.equals("")) {
+    /*public static boolean isValidNom(String nom) {
+        if (!nom.equals("")) {
             return true;
+        } else {
+            System.out.println("Le nom ne doit pas être vide !");
         }
 
         return false;
-    }
+    }*/
 
-    public void __String() {
-        System.out.println("Nom: " + this.nom + " " + this.email);
+    @Override
+    public String toString() {
+        return "ID:" + this.id + " Nom: " + this.nom + " Email: " + this.email;
     }
 }

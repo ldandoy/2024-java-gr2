@@ -19,6 +19,8 @@ public class Connexion {
             
         } catch (SQLException e) {
             System.out.println("Erreur de connexion : " + e.getMessage());
+            this.close();
+            System.exit(1);
         }
     }
 
