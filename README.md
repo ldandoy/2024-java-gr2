@@ -2381,7 +2381,7 @@ Scene Builder est un outil visuel pour créer des interfaces FXML sans écrire d
 
 Pour créer vous même vos interfaces graphiques: https://gluonhq.com/products/scene-builder/
 
-*interface.fxml*
+*App.fxml*
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.Button?>
@@ -2393,7 +2393,7 @@ Pour créer vous même vos interfaces graphiques: https://gluonhq.com/products/s
 </VBox>
 ```
 
-*FXMLApp.java*
+*App.java*
 
 ```java
 package com.example;
@@ -2401,19 +2401,25 @@ package com.example;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+// import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class FXMLApp extends Application {
+public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Charger l'interface FXML
-        VBox root = FXMLLoader.load(getClass().getResource("/interface.fxml"));
+        // Créer un label
+        /*Label label = new Label("Bonjour, JavaFX !");
+        label.getStyleClass().add("test");*/
+        VBox root = FXMLLoader.load(getClass().getResource("/layouts/App.fxml"));
 
-        // Créer la scène et afficher la fenêtre
+        // Créer une scène avec le label
         Scene scene = new Scene(root, 300, 200);
-        primaryStage.setTitle("Interface FXML");
+        scene.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
+
+        // Configurer la fenêtre principale
+        primaryStage.setTitle("Ma Première Application JavaFX");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -2427,5 +2433,5 @@ public class FXMLApp extends Application {
 Pour exécuter le programme
 
 ```bash
-mvn clean javafx:run -Djavafx.mainClass=com.example.FXMLApp
+mvn clean javafx:run
 ```
