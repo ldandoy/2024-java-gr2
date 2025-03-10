@@ -2441,23 +2441,25 @@ mvn clean javafx:run
 Créer un projet de gestion d'utilisateur stocker dans une base de données MySQL, avec une interface graphique en XML.
 
 On devra pouvoir:
+
 - Créer un utilisateur
 - Lister les utilisateurs de la base de données
 - Editer et Supprimer un utilisateur par son ID
 - Rechercher un utilisateur par son mail ou son nom
 - Une fonctionnalité de votre choix
+- Un utilisateur est défini comme suit:
 
-Un utilisateur est défini comme suit:
-
+```
 +-------------------------+
-|      Utilisateur        |
+|        Utilisateur      |
++-------------------------+ 
+| - int id                | 
+| - String name           | 
+| - String email          | 
+| - Datetime createdAt    | 
+| - Datetime updatedAt    | 
++-------------------------+ 
+| getter() / setter()     | 
+| toString()              | 
 +-------------------------+
-| - int id                |
-| - String name           |
-| - String email          |
-| - Datetime createdAt    |
-| - Datetime updatedAt    |
-+-------------------------+
-| getter() / setter()     |
-| toString()              |
-+-------------------------+
+```
